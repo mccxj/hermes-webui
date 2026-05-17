@@ -3346,6 +3346,23 @@ def _run_agent_streaming(
                         'duration': cb_kwargs.get('duration'),
                         'is_error': bool(cb_kwargs.get('is_error', False)),
                     })
+                    # ── Skill usage tracking (record to _skill_usage.jsonl) ──
+                    if name in ('skill_view', 'skill_manage') and not ephemeral:
+                        try:
+                            from api.skill_usage import _persist_skill_event as _pse
+                            _pse({
+                                'tool': name,
+                                'skill': (args or {}).get('name', ''),
+                                'action': (args or {}).get('action', '')
+                                    if name == 'skill_manage' else 'view',
+                                'event': event_type,
+                                'ts': time.time(),
+                                'session_id': session_id,
+                                'duration': cb_kwargs.get('duration', 0),
+                                'is_error': bool(cb_kwargs.get('is_error', False)),
+                            })
+                        except Exception:
+                            pass  # non-fatal; never interrupt agent execution
                     _tool_stats = meter().get_stats()
                     _tool_stats['session_id'] = session_id
                     _tool_stats['usage'] = _live_usage_snapshot()

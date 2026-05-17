@@ -2821,7 +2821,25 @@ def _handle_insights(handler, parsed) -> bool:
         "daily_tokens": daily_series,
         "activity_by_day": dow_data,
         "activity_by_hour": hod_data,
+        "skill_activity": _build_skill_activity(days, SESSION_DIR),
     })
+
+def _build_skill_activity(days, session_dir):
+    """Build skill usage stats for the Insights panel.
+
+    Returns None when the module is unavailable (graceful degradation).
+    """
+    try:
+        from api.skill_usage import build_skill_usage_stats
+        skills_dir = _active_skills_dir()
+        skills_meta = _skills_list_from_dir(skills_dir).get("skills", [])
+        return build_skill_usage_stats(days, skills_meta, session_dir)
+    except Exception:
+        import logging
+        logging.getLogger("routes").debug(
+            "Failed to build skill activity stats", exc_info=True
+        )
+        return None
 
 
 # ── GET routes ────────────────────────────────────────────────────────────────

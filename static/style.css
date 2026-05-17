@@ -3652,6 +3652,18 @@ main.main.showing-insights > #mainInsights{display:flex;overflow-y:auto;}
 .insights-daily-bar-output{background:color-mix(in srgb,var(--accent) 55%,var(--text));min-height:0;}
 .insights-daily-bar span{height:14px;font-size:9px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;}
 .insights-daily-legend{display:flex;gap:12px;align-items:center;margin-top:8px;font-size:11px;color:var(--muted);}
+
+/* Skill Activity summary chips */
+.skill-activity-chips{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.skill-activity-chip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);min-width:60px;}
+.sa-chip-val{font-size:16px;font-weight:650;color:var(--text);font-variant-numeric:tabular-nums;}
+.sa-chip-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+/* Skill Activity table: 5 columns */
+.skill-activity-table .insights-table-head,
+.skill-activity-table .insights-table-row{grid-template-columns:minmax(90px,1.5fr) 64px minmax(60px,1fr) 64px minmax(60px,1fr);gap:6px;align-items:center;}
+.sa-last-called,.sa-last-change{font-size:11px;color:var(--muted);white-space:nowrap;}
+/* Override when no daily trend card is shown before the table */
+.skill-activity-table{margin-top:0;}
 .insights-daily-legend span{display:inline-flex;align-items:center;gap:5px;}
 .insights-daily-legend i{width:8px;height:8px;border-radius:2px;display:inline-block;}
 .insights-daily-legend-input{background:var(--accent);}

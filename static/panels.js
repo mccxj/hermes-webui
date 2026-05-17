@@ -3184,8 +3184,82 @@ function _renderInsights(d, box, wikiStatus) {
     </div>
     ${dowHtml}
     ${hodHtml}
+    ${_renderSkillActivity(d)}
     <div style="text-align:center;color:var(--muted);font-size:10px;margin-top:12px;opacity:.6">${esc(t('insights_footer').replace('{days}', d.period_days))}</div>
   `;
+}
+
+// ── Skill Activity section (rendered inside Insights panel) ──────────
+
+function _renderSkillActivity(d) {
+  const sa = d.skill_activity;
+  if (!sa) return '';  // graceful degradation: module unavailable or no data
+
+  const ranking = sa.ranking || [];
+  const summary = sa.summary || {};
+  const trend = Array.isArray(sa.daily_trend) ? sa.daily_trend : [];
+  const hasAny =
+    (summary.total_calls || 0) > 0 ||
+    (summary.active_skills || 0) > 0 ||
+    ranking.length > 0 ||
+    trend.length > 0;
+
+  // ── Empty state ──
+  if (!hasAny) {
+    return `<div class="insights-card"><div class="insights-card-title">${esc(t('insights_skill_activity'))}</div><div class="insights-empty">${esc(t('insights_skill_no_activity'))}</div></div>`;
+  }
+
+  const fmt = n => Number(n || 0).toLocaleString();
+  let html = '';
+
+  // ── Section title (single card wrapper for everything) ──
+  html += `<div class="insights-card"><div class="insights-card-title">${esc(t('insights_skill_activity'))}</div>`;
+
+  // ── Summary chips row (always visible when the section is) ──
+  html += `<div class="skill-activity-chips">` +
+    `<div class="skill-activity-chip"><span class="sa-chip-val">${fmt(summary.total_skills)}</span><span class="sa-chip-lbl">${esc(t('insights_skill_total'))}</span></div>` +
+    `<div class="skill-activity-chip"><span class="sa-chip-val">${fmt(summary.total_calls)}</span><span class="sa-chip-lbl">${esc(t('insights_skill_calls'))}</span></div>` +
+    `<div class="skill-activity-chip"><span class="sa-chip-val">${fmt(summary.active_skills)}</span><span class="sa-chip-lbl">${esc(t('insights_skill_active'))}</span></div>` +
+    `<div class="skill-activity-chip"><span class="sa-chip-val">${fmt(summary.total_changes)}</span><span class="sa-chip-lbl">${esc(t('insights_skill_changes'))}</span></div>` +
+    `</div>`;
+
+  // ── Daily trend (sparkline, same visual style as token chart) ──
+  if (trend.length > 0) {
+    const maxCalls = Math.max(...trend.map(e => e.calls), 1);
+    const labelEvery = Math.max(Math.ceil(trend.length / 7), 1);
+    html += `<div class="insights-daily-token-chart" style="margin-top:8px">` +
+      trend.map((entry, idx) => {
+        const pct = maxCalls > 0 ? (entry.calls / maxCalls * 100).toFixed(1) : '0';
+        const showLabel = idx === 0 || idx === trend.length - 1 || idx % labelEvery === 0;
+        const title = `${entry.date} · ${entry.calls} calls`;
+        return `<div class="insights-daily-bar" title="${esc(title)}"><div class="insights-daily-stack"><div class="insights-daily-bar-input" style="height:${pct}%"></div></div><span>${showLabel ? esc(entry.date ? entry.date.slice(5) : '') : ''}</span></div>`;
+      }).join('') +
+      `</div>`;
+  }
+
+  // ── Ranking table (5 columns: skill, calls, last called, changes, last change) ──
+  if (ranking.length > 0) {
+    html += `<div class="insights-table skill-activity-table" style="margin-top:8px"><div class="insights-table-head">` +
+      `<span>${esc(t('insights_skill_name'))}</span>` +
+      `<span>${esc(t('insights_skill_calls'))}</span>` +
+      `<span>${esc(t('insights_skill_last_called'))}</span>` +
+      `<span>${esc(t('insights_skill_changes'))}</span>` +
+      `<span>${esc(t('insights_skill_last_change'))}</span>` +
+      `</div>` +
+      ranking.map(row => {
+        return `<div class="insights-table-row">` +
+          `<span class="insights-model-name" title="${esc(row.skill)}${row.category ? ' (' + row.category + ')' : ''}">${esc(row.skill)}</span>` +
+          `<span>${fmt(row.calls)}</span>` +
+          `<span class="sa-last-called">${esc(row.last_called || '—')}</span>` +
+          `<span>${row.changes > 0 ? fmt(row.changes) : '—'}</span>` +
+          `<span class="sa-last-change">${esc(row.last_change || '—')}</span>` +
+          `</div>`;
+      }).join('') +
+      `</div>`;
+  }
+
+  html += `</div>`;  // close insights-card wrapper
+  return html;
 }
 
 async function clearConversation() {
