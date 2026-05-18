@@ -5695,31 +5695,49 @@ async function loadPluginsPanel(){
 }
 
 function _buildPluginCard(plugin){
-  const card=document.createElement('div');
-  card.className='provider-card plugin-card';
-  card.dataset.plugin=(plugin&&plugin.key)||'';
-  const hooks=Array.isArray(plugin&&plugin.hooks)?plugin.hooks:[];
-  const hookHtml=hooks.length
-    ? hooks.map(h=>`<span class="plugin-hook-badge">${esc(h)}</span>`).join('')
-    : '<span class="plugin-hook-empty">'+t('plugins_no_hooks')+'</span>';
-  const version=(plugin&&plugin.version)?' · v'+esc(plugin.version):'';
-  const desc=(plugin&&plugin.description)?esc(plugin.description):t('plugins_no_description');
-  const enabled=plugin&&plugin.enabled!==false;
-  card.innerHTML=`
-    <div class="provider-card-header plugin-card-header">
-      <div class="provider-card-info">
-        <div class="provider-card-name">${esc((plugin&&plugin.name)||t('plugins_unnamed'))}</div>
-        <div class="provider-card-meta">${esc((plugin&&plugin.key)||'plugin')}${version}</div>
-      </div>
-      <span class="provider-card-badge ${enabled?'':'plugin-card-badge-disabled'}">${enabled?t('plugins_enabled'):t('plugins_disabled')}</span>
-    </div>
-    <div class="provider-card-body plugin-card-body">
-      <div class="provider-card-hint">${desc}</div>
-      <div class="provider-card-label">${t('plugins_registered_hooks')}</div>
-      <div class="plugin-hook-list">${hookHtml}</div>
-    </div>
-  `;
-  return card;
+ const card=document.createElement('div');
+ card.className='provider-card plugin-card';
+ card.dataset.plugin=(plugin&&plugin.key)||'';
+ const hooks=Array.isArray(plugin&&plugin.hooks)?plugin.hooks:[];
+ const hookHtml=hooks.length
+ ? hooks.map(h=>`<span class="plugin-hook-badge">${esc(h)}</span>`).join('')
+ : '<span class="plugin-hook-empty">'+t('plugins_no_hooks')+'</span>';
+ const version=(plugin&&plugin.version)?' · v'+esc(plugin.version):'';
+ const desc=(plugin&&plugin.description)?esc(plugin.description):t('plugins_no_description');
+ const enabled=plugin&&plugin.enabled!==false;
+ const pluginKey=esc((plugin&&plugin.key)||'');
+ const toggleBtn=enabled
+ ?`<button type="button" class="provider-card-btn provider-card-btn-ghost plugin-toggle-btn" onclick="togglePlugin('${pluginKey}',false)" title="${esc(t('plugins_disable'))}">${esc(t('plugins_disable'))}</button>`
+ :`<button type="button" class="provider-card-btn provider-card-btn-primary plugin-toggle-btn" onclick="togglePlugin('${pluginKey}',true)" title="${esc(t('plugins_enable'))}">${esc(t('plugins_enable'))}</button>`;
+ card.innerHTML=`
+ <div class="provider-card-header plugin-card-header">
+ <div class="provider-card-info">
+ <div class="provider-card-name">${esc((plugin&&plugin.name)||t('plugins_unnamed'))}</div>
+ <div class="provider-card-meta">${esc((plugin&&plugin.key)||'plugin')}${version}</div>
+ </div>
+ <span class="provider-card-badge ${enabled?'':'plugin-card-badge-disabled'}">${enabled?t('plugins_enabled'):t('plugins_disabled')}</span>
+ </div>
+ <div class="provider-card-body plugin-card-body">
+ <div class="provider-card-hint">${desc}</div>
+ <div class="provider-card-label">${t('plugins_registered_hooks')}</div>
+ <div class="plugin-hook-list">${hookHtml}</div>
+ <div class="plugin-card-actions">
+ ${toggleBtn}
+ </div>
+ <div class="plugin-toggle-hint">${esc(t('plugins_toggle_hint'))}</div>
+ </div>
+ `;
+ return card;
+}
+
+async function togglePlugin(name, enabled){
+ try{
+ await api('/api/plugins/toggle',{method:'POST',body:JSON.stringify({name,enabled})});
+ showToast(enabled?t('plugins_enabled_msg'):t('plugins_disabled_msg'));
+ await loadPluginsPanel();
+ }catch(e){
+ showToast(t('error_prefix')+e.message);
+ }
 }
 
 // ── Providers panel ───────────────────────────────────────────────────────

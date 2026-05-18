@@ -513,7 +513,7 @@ const LOCALES = {
     settings_tab_preferences: 'Preferences',
     settings_tab_plugins: 'Plugins',
     settings_plugins_title: 'Plugins',
-    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. This panel is read-only.',
+    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. Enable or disable plugins. Changes take effect on the next session.',
     settings_plugins_empty: 'No Hermes plugins are currently visible. Install or enable plugins from the Hermes CLI/config to see them here.',
     plugins_unnamed: 'Unnamed plugin',
     plugins_no_description: 'No description provided.',
@@ -522,6 +522,11 @@ const LOCALES = {
     plugins_enabled: 'Enabled',
     plugins_disabled: 'Disabled',
     plugins_load_failed: 'Failed to load plugins: ',
+    plugins_enable: 'Enable',
+    plugins_disable: 'Disable',
+    plugins_toggle_hint: 'Changes take effect on next session.',
+    plugins_enabled_msg: 'Plugin enabled.',
+    plugins_disabled_msg: 'Plugin disabled.',
     settings_tab_system: 'System',
     settings_title: 'Settings',
     settings_save_btn: 'Save Settings',
@@ -1726,7 +1731,7 @@ const LOCALES = {
     settings_tab_preferences: 'Preferenze',
     settings_tab_plugins: 'Plugin',
     settings_plugins_title: 'Plugins',  // TODO: translate
-    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. This panel is read-only.',  // TODO: translate
+    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. Enable or disable plugins. Changes take effect on the next session.',  // TODO: translate
     settings_plugins_empty: 'No Hermes plugins are currently visible. Install or enable plugins from the Hermes CLI/config to see them here.',  // TODO: translate
     plugins_unnamed: 'Unnamed plugin',  // TODO: translate
     plugins_no_description: 'No description provided.',  // TODO: translate
@@ -1735,6 +1740,11 @@ const LOCALES = {
     plugins_enabled: 'Enabled',  // TODO: translate
     plugins_disabled: 'Disabled',  // TODO: translate
     plugins_load_failed: 'Failed to load plugins: ',  // TODO: translate
+    plugins_enable: 'Abilita',
+    plugins_disable: 'Disabilita',
+    plugins_toggle_hint: 'Le modifiche avranno effetto alla prossima sessione.',
+    plugins_enabled_msg: 'Plugin abilitato.',
+    plugins_disabled_msg: 'Plugin disabilitato.',
     settings_tab_system: 'Sistema',
     settings_title: 'Impostazioni',
     settings_save_btn: 'Salva Impostazioni',
@@ -2931,7 +2941,7 @@ const LOCALES = {
     settings_tab_preferences: '環境設定',
     settings_tab_plugins: 'プラグイン',
     settings_plugins_title: 'Plugins',  // TODO: translate
-    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. This panel is read-only.',  // TODO: translate
+    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. Enable or disable plugins. Changes take effect on the next session.',  // TODO: translate
     settings_plugins_empty: 'No Hermes plugins are currently visible. Install or enable plugins from the Hermes CLI/config to see them here.',  // TODO: translate
     plugins_unnamed: 'Unnamed plugin',  // TODO: translate
     plugins_no_description: 'No description provided.',  // TODO: translate
@@ -2940,6 +2950,11 @@ const LOCALES = {
     plugins_enabled: 'Enabled',  // TODO: translate
     plugins_disabled: 'Disabled',  // TODO: translate
     plugins_load_failed: 'Failed to load plugins: ',  // TODO: translate
+    plugins_enable: '有効化',
+    plugins_disable: '無効化',
+    plugins_toggle_hint: '変更は次のセッションで有効になります。',
+    plugins_enabled_msg: 'プラグインが有効化されました。',
+    plugins_disabled_msg: 'プラグインが無効化されました。',
     settings_tab_system: 'システム',
     settings_title: '設定',
     settings_save_btn: '設定を保存',
@@ -4651,7 +4666,7 @@ const LOCALES = {
     settings_tab_preferences: 'Preferences',
     settings_tab_plugins: 'Плагины',
     settings_plugins_title: 'Plugins',  // TODO: translate
-    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. This panel is read-only.',  // TODO: translate
+    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. Enable or disable plugins. Changes take effect on the next session.',  // TODO: translate
     settings_plugins_empty: 'No Hermes plugins are currently visible. Install or enable plugins from the Hermes CLI/config to see them here.',  // TODO: translate
     plugins_unnamed: 'Unnamed plugin',  // TODO: translate
     plugins_no_description: 'No description provided.',  // TODO: translate
@@ -4660,6 +4675,11 @@ const LOCALES = {
     plugins_enabled: 'Enabled',  // TODO: translate
     plugins_disabled: 'Disabled',  // TODO: translate
     plugins_load_failed: 'Failed to load plugins: ',  // TODO: translate
+    plugins_enable: 'Включить',
+    plugins_disable: 'Отключить',
+    plugins_toggle_hint: 'Изменения вступят в силу в следующей сессии.',
+    plugins_enabled_msg: 'Плагин включён.',
+    plugins_disabled_msg: 'Плагин отключён.',
     settings_tab_system: 'System',
     status_updated: 'Updated',
     status_ephemeral: 'Ephemeral snapshot — not saved to transcript history.',
@@ -5783,7 +5803,7 @@ const LOCALES = {
     settings_tab_preferences: 'Preferences',
     settings_tab_plugins: 'Plugins',
     settings_plugins_title: 'Plugins',  // TODO: translate
-    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. This panel is read-only.',  // TODO: translate
+    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. Enable or disable plugins. Changes take effect on the next session.',  // TODO: translate
     settings_plugins_empty: 'No Hermes plugins are currently visible. Install or enable plugins from the Hermes CLI/config to see them here.',  // TODO: translate
     plugins_unnamed: 'Unnamed plugin',  // TODO: translate
     plugins_no_description: 'No description provided.',  // TODO: translate
@@ -5792,6 +5812,11 @@ const LOCALES = {
     plugins_enabled: 'Enabled',  // TODO: translate
     plugins_disabled: 'Disabled',  // TODO: translate
     plugins_load_failed: 'Failed to load plugins: ',  // TODO: translate
+    plugins_enable: 'Enable',
+    plugins_disable: 'Disable',
+    plugins_toggle_hint: 'Changes take effect on next session.',
+    plugins_enabled_msg: 'Plugin enabled.',
+    plugins_disabled_msg: 'Plugin disabled.',
     settings_tab_system: 'System',
     status_updated: 'Updated',
     status_ephemeral: 'Ephemeral snapshot — not saved to transcript history.',
@@ -6649,7 +6674,7 @@ const LOCALES = {
     settings_tab_preferences: 'Preferences',
     settings_tab_plugins: 'Plugins',
     settings_plugins_title: 'Plugins',  // TODO: translate
-    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. This panel is read-only.',  // TODO: translate
+    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. Enable or disable plugins. Changes take effect on the next session.',  // TODO: translate
     settings_plugins_empty: 'No Hermes plugins are currently visible. Install or enable plugins from the Hermes CLI/config to see them here.',  // TODO: translate
     plugins_unnamed: 'Unnamed plugin',  // TODO: translate
     plugins_no_description: 'No description provided.',  // TODO: translate
@@ -6658,6 +6683,11 @@ const LOCALES = {
     plugins_enabled: 'Enabled',  // TODO: translate
     plugins_disabled: 'Disabled',  // TODO: translate
     plugins_load_failed: 'Failed to load plugins: ',  // TODO: translate
+    plugins_enable: 'Aktivieren',
+    plugins_disable: 'Deaktivieren',
+    plugins_toggle_hint: 'Änderungen werden in der nächsten Sitzung wirksam.',
+    plugins_enabled_msg: 'Plugin aktiviert.',
+    plugins_disabled_msg: 'Plugin deaktiviert.',
     settings_tab_system: 'System',
     status_updated: 'Updated',
     status_ephemeral: 'Ephemeral snapshot — not saved to transcript history.',
@@ -7316,6 +7346,11 @@ const LOCALES = {
     plugins_enabled: '已启用',
     plugins_disabled: '已禁用',
     plugins_load_failed: '加载插件失败：',
+    plugins_enable: '启用',
+    plugins_disable: '禁用',
+    plugins_toggle_hint: '更改将在下一次会话中生效。',
+    plugins_enabled_msg: '插件已启用。',
+    plugins_disabled_msg: '插件已禁用。',
     workspace_empty_no_path: '未选择工作区。请在 设置 → 工作区 中设置工作区以浏览文件。',
     workspace_empty_dir: '此工作区为空。',
     workspace_show_hidden_files: '显示隐藏文件',
@@ -8549,6 +8584,11 @@ const LOCALES = {
     plugins_enabled: '已啟用',
     plugins_disabled: '已停用',
     plugins_load_failed: '載入外掛失敗：',
+    plugins_enable: '啟用',
+    plugins_disable: '停用',
+    plugins_toggle_hint: '變更將在下次工作階段生效。',
+    plugins_enabled_msg: '外掛程式已啟用。',
+    plugins_disabled_msg: '外掛程式已停用。',
     settings_tab_system: '系統',
     settings_title: '\u8a2d\u5b9a',
     settings_save_btn: '\u5132\u5b58\u8a2d\u5b9a',
@@ -9833,7 +9873,7 @@ const LOCALES = {
     settings_tab_preferences: 'Preferências',
     settings_tab_plugins: 'Plugins',
     settings_plugins_title: 'Plugins',  // TODO: translate
-    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. This panel is read-only.',  // TODO: translate
+    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. Enable or disable plugins. Changes take effect on the next session.',  // TODO: translate
     settings_plugins_empty: 'No Hermes plugins are currently visible. Install or enable plugins from the Hermes CLI/config to see them here.',  // TODO: translate
     plugins_unnamed: 'Unnamed plugin',  // TODO: translate
     plugins_no_description: 'No description provided.',  // TODO: translate
@@ -9842,6 +9882,11 @@ const LOCALES = {
     plugins_enabled: 'Enabled',  // TODO: translate
     plugins_disabled: 'Disabled',  // TODO: translate
     plugins_load_failed: 'Failed to load plugins: ',  // TODO: translate
+    plugins_enable: 'Ativar',
+    plugins_disable: 'Desativar',
+    plugins_toggle_hint: 'As alterações surtirão efeito na próxima sessão.',
+    plugins_enabled_msg: 'Plugin ativado.',
+    plugins_disabled_msg: 'Plugin desativado.',
     settings_tab_system: 'Sistema',
     settings_title: 'Configurações',
     settings_save_btn: 'Salvar Configurações',
@@ -10941,7 +10986,7 @@ const LOCALES = {
     settings_tab_preferences: '환경설정',
     settings_tab_plugins: '플러그인',
     settings_plugins_title: 'Plugins',  // TODO: translate
-    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. This panel is read-only.',  // TODO: translate
+    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. Enable or disable plugins. Changes take effect on the next session.',  // TODO: translate
     settings_plugins_empty: 'No Hermes plugins are currently visible. Install or enable plugins from the Hermes CLI/config to see them here.',  // TODO: translate
     plugins_unnamed: 'Unnamed plugin',  // TODO: translate
     plugins_no_description: 'No description provided.',  // TODO: translate
@@ -10950,6 +10995,11 @@ const LOCALES = {
     plugins_enabled: 'Enabled',  // TODO: translate
     plugins_disabled: 'Disabled',  // TODO: translate
     plugins_load_failed: 'Failed to load plugins: ',  // TODO: translate
+    plugins_enable: 'Enable',
+    plugins_disable: 'Disable',
+    plugins_toggle_hint: 'Changes take effect on next session.',
+    plugins_enabled_msg: 'Plugin enabled.',
+    plugins_disabled_msg: 'Plugin disabled.',
     settings_tab_system: '시스템',
     settings_title: '설정',
     settings_save_btn: '설정 저장',
@@ -12066,7 +12116,7 @@ const LOCALES = {
     settings_tab_preferences: 'Préférences',
     settings_tab_plugins: 'Plugins',
     settings_plugins_title: 'Plugins',  // TODO: translate
-    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. This panel is read-only.',  // TODO: translate
+    settings_plugins_meta: 'View installed Hermes plugins and the lifecycle hooks they register. Enable or disable plugins. Changes take effect on the next session.',  // TODO: translate
     settings_plugins_empty: 'No Hermes plugins are currently visible. Install or enable plugins from the Hermes CLI/config to see them here.',  // TODO: translate
     plugins_unnamed: 'Unnamed plugin',  // TODO: translate
     plugins_no_description: 'No description provided.',  // TODO: translate
@@ -12075,6 +12125,11 @@ const LOCALES = {
     plugins_enabled: 'Enabled',  // TODO: translate
     plugins_disabled: 'Disabled',  // TODO: translate
     plugins_load_failed: 'Failed to load plugins: ',  // TODO: translate
+    plugins_enable: 'Activer',
+    plugins_disable: 'Désactiver',
+    plugins_toggle_hint: 'Les modifications prennent effet à la prochaine session.',
+    plugins_enabled_msg: 'Plugin activé.',
+    plugins_disabled_msg: 'Plugin désactivé.',
     settings_tab_system: 'Système',
     settings_title: 'Paramètres',
     settings_save_btn: 'Enregistrer les paramètres',

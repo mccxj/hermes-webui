@@ -3275,7 +3275,7 @@ def _plugin_visibility_payload(manager=None) -> dict:
         "plugins": plugins,
         "empty": not bool(plugins),
         "supported_hooks": list(_PLUGIN_VISIBILITY_HOOKS),
-        "read_only": True,
+        "read_only": False,
     }
 
 
@@ -3294,6 +3294,31 @@ def _handle_plugins(handler, parsed) -> bool:
                 "unavailable": True,
             },
         )
+
+
+def _handle_plugin_toggle(handler, body):
+    """Enable or disable a plugin via config.yaml allow/deny lists."""
+    try:
+        require(body, "name", "enabled")
+    except ValueError as e:
+        return bad(handler, str(e))
+    name = str(body["name"]).strip()
+    enabled = body["enabled"]
+    if not isinstance(enabled, bool):
+        return bad(handler, '"enabled" must be true or false')
+    if not name:
+        return bad(handler, '"name" must not be empty')
+    try:
+        from hermes_cli.plugins_cmd import dashboard_set_agent_plugin_enabled
+
+        result = dashboard_set_agent_plugin_enabled(name, enabled=enabled)
+    except ImportError:
+        return bad(handler, "Plugin management is not available in this installation", 501)
+    except Exception as exc:
+        return bad(handler, _sanitize_error(exc))
+    if not result.get("ok"):
+        return bad(handler, result.get("error", "Unknown error"))
+    return j(handler, result)
 
 
 _SHELL_ERROR_HTML = """<!doctype html>
@@ -5137,6 +5162,10 @@ def handle_post(handler, parsed) -> bool:
 
     if parsed.path == "/api/terminal/close":
         return _handle_terminal_close(handler, body)
+
+    # ── Plugins toggle (POST) ──
+    if parsed.path == "/api/plugins/toggle":
+        return _handle_plugin_toggle(handler, body)
 
     # ── Cron API (POST) ──
     # See GET-side comment above: wrap in cron_profile_context so writes go
