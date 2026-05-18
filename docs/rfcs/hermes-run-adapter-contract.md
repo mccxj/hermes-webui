@@ -342,7 +342,19 @@ class RuntimeAdapter:
     def cancel_run(self, run_id: str) -> ControlResult: ...
     def respond_approval(self, run_id: str, approval_id: str, choice: str) -> ControlResult: ...
     def respond_clarify(self, run_id: str, clarify_id: str, response: str) -> ControlResult: ...
+    def queue_message(self, run_id: str, message: str, *, mode: str = "queue") -> ControlResult: ...
+    def update_goal(
+        self,
+        session_id: str,
+        action: Literal["set", "pause", "resume", "clear", "status", "edit"],
+        text: str | None = None,
+    ) -> ControlResult: ...
 ```
+
+`queue_message` is named for the legacy `/api/session/queue` payload: it
+accepts follow-up chat text rather than arbitrary runtime input. The method name
+does not require the HTTP route to change; it documents the adapter-level control
+semantics that a later Slice 3c implementation should preserve.
 
 Required data classes / payload fields:
 
@@ -392,6 +404,8 @@ way the new entry point is selected.
 | `cancel_run` | delegate to existing cancel handler/control path | do not redesign cancellation semantics yet |
 | `respond_approval` | delegate to existing approval response path | do not persist approval callbacks in the main server as a new adapter-owned queue |
 | `respond_clarify` | delegate to existing clarify response path | do not persist clarify callbacks in the main server as a new adapter-owned queue |
+| `queue_message` | delegate to existing queue/continue path when that slice is accepted | do not invent a parallel continuation buffer or run scheduler |
+| `update_goal` | delegate to existing goal command/control path when that slice is accepted | do not move goal evaluation or continuation ownership into the adapter |
 
 Any implementation that needs a new long-lived queue, agent cache, cancellation
 registry, or callback registry inside the main WebUI process is out of scope for
@@ -423,12 +437,14 @@ execution-survives-WebUI-restart gate remains deferred to Slice 4.
 
 ### Slice 3: Control migration
 
-Status as of 2026-05-17: Slice 3a cancel routing shipped in v0.51.86 via #2479.
+Status as of 2026-05-18: Slice 3a cancel routing shipped in v0.51.86 via #2479,
+and Slice 3b approval/clarify routing shipped in v0.51.89 via #2496 / #2507.
 Cancel was the smallest control-plane migration because it already had one clear
 browser affordance, one active-run target, and an existing legacy handler to
-delegate to. Approval, clarify, queue/continue, and goal remain intentionally
-held behind separate gates because they carry more callback and state-lifetime
-risk.
+delegate to. Approval and clarify then proved the same protocol-translator shape
+for user-mediated callback controls. Queue/continue and goal remain intentionally
+held behind the next gate because they can change run lifecycle semantics rather
+than just resolve an already-pending control.
 
 Scope:
 
@@ -553,6 +569,83 @@ Non-goals for Slice 3b:
   callback model;
 - no change to approval risk classification, allowed choices, or clarify prompt
   UX;
+- no public chat-start/status response-shape expansion for adapter-only fields.
+
+#### Slice 3c: Queue/continue and goal control gate
+
+The next control migration should specify queue/continue and goal before any code
+routes those actions through `RuntimeAdapter`. They may ship as separate
+implementation PRs, but they should share one gate because both affect what the
+agent does after the current user turn instead of merely resolving a pending
+prompt. Queue/continue controls append or schedule follow-up input against live
+or resumable work; goal controls set, pause, resume, clear, or inspect a
+standing cross-turn objective. Both can accidentally create a second continuation
+model if WebUI buffers or evaluates them independently.
+
+During Slice 3c, `RuntimeAdapter.queue_message(...)` and
+`RuntimeAdapter.update_goal(...)` should remain protocol translators over the
+existing legacy queue/goal paths. They must not create a WebUI-owned run queue,
+goal evaluator, continuation scheduler, agent loop, or sidecar substitute inside
+the main WebUI process.
+
+`RuntimeAdapter.update_goal(...)` controls goal state mutations only. Post-turn
+goal evaluation and the decision to continue remain in the existing agent
+conversation loop until the later runner/sidecar slice moves execution
+ownership; Slice 3c must not move that evaluator into WebUI or the adapter.
+
+Acceptance properties:
+
+1. **Same visible result as legacy queue/continue and goal.** Existing `/queue`
+   and `/goal` semantics, browser status affordances, paused/resumed states, and
+   post-turn continuation behavior remain unchanged for users. The adapter flag
+   changes only the route/control entry point.
+2. **Stable response contracts.** Existing queue/continue and goal HTTP or
+   command responses keep their current browser-facing shapes. Adapter-only run
+   metadata, internal status, or capability details must not leak into public
+   responses unless a later RFC explicitly expands the contract.
+3. **Bounded unavailable-control behavior.** Requests for a missing run,
+   unsupported profile, inactive session, paused/cleared goal, or stale queued
+   continuation return bounded `ControlResult` states such as `not-active`,
+   `unsupported`, or `conflict`; they must not create a phantom run, resurrect a
+   dead stream, or silently enqueue work against the wrong session.
+4. **Replayable lifecycle/status evidence.** Queue/continue submission, goal
+   status changes, and resulting post-turn continuation decisions remain visible
+   through the journal/session diagnostic surface where the legacy path already
+   emits equivalent state. Slice 3c does not have to make queued follow-ups or
+   goals survive a WebUI process restart while execution is still in-process;
+   that stronger property belongs to the runner/sidecar gate.
+5. **No new runtime-surrogate state.** The implementation must not add a second
+   process-local queue, goal table, scheduler, cached-agent registry, or
+   continuation loop under adapter-specific names. If the existing legacy path
+   cannot support the route without new ownership state, stop and amend this RFC
+   before landing code.
+6. **Ordering and idempotency are explicit.** Repeating the same queue/continue
+   request should not duplicate follow-up work unless the legacy path already
+   defines that behavior. Goal pause/resume/clear/status operations should be
+   safe to repeat and should report one coherent state.
+
+Suggested regression coverage:
+
+- route/source tests proving flagged queue/continue and goal paths call the
+  adapter seam while the default path remains the existing legacy handler;
+- adapter unit tests proving `queue_message` and `update_goal` delegate exactly
+  once, return accepted/not-active/unsupported/conflict `ControlResult` values,
+  and do not expose unsafe internal strings to browser responses;
+- ordering/idempotency tests for repeated queue/continue and repeated goal
+  pause/resume/clear/status operations;
+- journal/session-load assertions that queue/goal state remains diagnosable after
+  reconnect where the legacy path currently emits state;
+- existing queue/goal UI/static tests under default legacy mode to prove no
+  browser contract drift.
+
+Non-goals for Slice 3c:
+
+- no runner process, sidecar, or execution-survives-WebUI-restart claim;
+- no durable WebUI-owned queue or goal scheduler;
+- no migration of `AIAgent` construction, post-turn goal evaluation, or the
+  agent continuation loop out of the legacy path;
+- no change to `/goal` command semantics, queue ordering semantics, or supported
+  capability metadata;
 - no public chat-start/status response-shape expansion for adapter-only fields.
 
 ### Slice 4: Runner process / sidecar boundary
