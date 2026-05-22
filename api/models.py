@@ -110,19 +110,30 @@ def _write_session_index(updates=None):
         # Lazy full-rebuild path — used when index doesn't exist yet.
         if updates is None or not SESSION_INDEX_FILE.exists():
             _cleanup_stale_tmp_files()  # best-effort sweep on startup / first call
-            entries = []
+            entry_map: dict[str, dict] = {}
             for p in SESSION_DIR.glob('*.json'):
                 if p.name.startswith('_'):
                     continue
                 try:
                     s = Session.load(p.stem)
                     if s:
-                        entries.append(s.compact())
+                        c = s.compact()
+                        sid = c.get('session_id')
+                        if sid:
+                            # Dedup by session_id: prefer entry with more messages
+                            # (handles old-format session_xxx.json files alongside
+                            #  WebUI-format xxx.json with the same session_id)
+                            existing = entry_map.get(sid)
+                            if existing is None or (
+                                c.get('message_count', 0) > existing.get('message_count', 0)
+                            ):
+                                entry_map[sid] = c
                 except Exception:
                     logger.debug("Failed to load session from %s", p)
+            entries = list(entry_map.values())
 
             with LOCK:
-                existing_ids = {e.get('session_id') for e in entries}
+                existing_ids = set(entry_map.keys())
                 for s in SESSIONS.values():
                     if s.session_id not in existing_ids:
                         entries.append(s.compact())
